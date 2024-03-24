@@ -55,3 +55,6 @@
 	process = git-lfs filter-process
 [ghq]
   root = ~/.ghq
+[user]
+	name = Roman (Ross) Koss
+	email = win.maklin@gmail.com
