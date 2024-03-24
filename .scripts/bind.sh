@@ -19,8 +19,9 @@ ln -s $PARENT_DIR/.gitignore ~/.gitignore
 ln -s $PARENT_DIR/.gitignore_global ~/.gitignore_global
 
 # User .env config
-mv ~/.env{,.bak}
-ln -s $PARENT_DIR/.env ~/.env
+# mv ~/.env{,.bak}
+rm ~/.env.example
+ln -s $PARENT_DIR/.env.example ~/.env.example
 
 # .dot_profile
-echo "source \"$PARENT_DIR/.dot_profile\"" >> ~/.zshrc
+echo "source \"$PARENT_DIR/.dot_profile\"" >>~/.zshrc
