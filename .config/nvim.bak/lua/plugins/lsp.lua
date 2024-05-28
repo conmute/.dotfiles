@@ -33,6 +33,8 @@ return {
     end,
     opts = {
       inlay_hints = { enabled = false },
+      -- autoformat = true,
+      autoformat = false,
       ---@type lspconfig.options
       servers = {
         cssls = {},

@@ -4,6 +4,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = {
+      highlight = { enable = false }, -- highligh keywords
       ensure_installed = {
         "astro",
         "cmake",
@@ -20,6 +21,8 @@ return {
         "scss",
         "sql",
         "svelte",
+        "markdown",
+        "markdown_inline",
       },
 
       -- matchup = {
