@@ -119,6 +119,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     opts = {
+      -- highlight = { enable = false }, -- highligh keywords
       ensure_installed = {
         "bash",
         "html",
