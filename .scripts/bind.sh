@@ -10,6 +10,9 @@ PARENT_DIR=$(dirname "$SCRIPT_DIR")
 rm -rf ~/.config/nvim
 ln -s $PARENT_DIR/.config/nvim ~/.config/nvim
 
+rm -rf ~/.config/fish
+ln -s $PARENT_DIR/.config/fish ~/.config/fish
+
 # setup git config
 rm ~/.gitignore
 rm ~/.gitconfig
