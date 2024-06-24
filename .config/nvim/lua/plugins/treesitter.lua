@@ -17,16 +17,16 @@ return {
         "http",
         "json",
         "scss",
-        "sql",
+        -- "sql",
         "vim",
         "lua",
         "xml",
       },
-      query_linter = {
-        enable = true,
-        use_virtual_text = true,
-        lint_events = { "BufWrite", "CursorHold" },
-      },
+      -- query_linter = {
+      --   enable = true,
+      --   use_virtual_text = true,
+      --   lint_events = { "BufWrite", "CursorHold" },
+      -- },
     },
   },
 }
