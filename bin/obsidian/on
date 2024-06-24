@@ -7,6 +7,10 @@ fi
 
 file_name=$(echo "$1" | tr ' ' '-')
 formatted_file_name=$(date "+%Y%m%d")_${file_name}.md
+
+echo $formatted_file_name
+
 cd "$OBSIDIAN_ROOT" || exit
+
 touch "inbox/${formatted_file_name}"
 nvim "inbox/${formatted_file_name}"
