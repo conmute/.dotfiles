@@ -18,6 +18,10 @@ ln -s $PARENT_DIR/.tmux.conf ~/.tmux.conf
 rm -rf ~/.tmux
 ln -s $PARENT_DIR/.tmux ~/.tmux
 
+# setup obsidian new note
+ln -s $PARENT_DIR/bin/obsidian/on ~/bin/on
+ln -s $PARENT_DIR/bin/obsidian/og ~/bin/og
+
 # setup git config
 rm ~/.gitignore
 rm ~/.gitconfig
@@ -33,4 +37,3 @@ ln -s $PARENT_DIR/.env.example ~/.env.example
 
 # .dot_profile
 echo "source \"$PARENT_DIR/.dot_profile.sh\"" >>~/.zshrc
-

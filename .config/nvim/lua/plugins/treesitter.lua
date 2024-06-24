@@ -2,9 +2,13 @@ return {
   -- add more treesitter parsers
   {
     "nvim-treesitter/nvim-treesitter",
-    tag = "v0.9.1",
     opts = {
       ensure_installed = {
+        "bash",
+        "yaml",
+        "tsx",
+        "markdown",
+        "markdown_inline",
         "javascript",
         "typescript",
         "css",

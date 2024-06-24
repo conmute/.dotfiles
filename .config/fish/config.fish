@@ -15,6 +15,9 @@ alias la "ls -A"
 alias ll "ls -l"
 alias lla "ll -A"
 alias g git
+alias oo 'cd $OBSIDIAN_ROOT'
+alias ox 'vim $OBSIDIAN_ROOT/inbox/*.md'
+
 command -qv nvim && alias vim nvim
 
 set -gx EDITOR nvim

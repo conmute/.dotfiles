@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LANG="en_US.UTF-8"
+export LANG="en_US.UTF-8"
 LC_COLLATE="en_US.UTF-8"
 LC_CTYPE="en_US.UTF-8"
 LC_MESSAGES="en_US.UTF-8"
@@ -8,6 +8,8 @@ LC_MONETARY="en_US.UTF-8"
 LC_NUMERIC="en_US.UTF-8"
 LC_TIME="en_US.UTF-8"
 LC_ALL="en_US.UTF-8"
+
+export PATH=~/bin:$PATH
 
 source $HOME/.env
 
@@ -24,3 +26,10 @@ export NVM_DIR="$HOME/.nvm"
 
 # Check if .nvmrc file exists
 test -f .nvmrc && nvm use
+
+# Obsidian
+
+alias oo='cd $OBSIDIAN_ROOT'
+alias or='vim $OBSIDIAN_ROOT/*.md'
+## This command to automatically publish things outside! To be configured…
+# alias ou='cd $HOME/notion-obsidian-sync-zazencodes && node batchUpload.js --lastmod-days-window 5'
