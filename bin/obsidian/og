@@ -1,10 +1,10 @@
 #!/bin/zsh
 
 # Directory containing markdown files
-VAULT_DIR="/Users/ross/.ghq/github.com/conmute/GTD"
+VAULT_DIR=$OBSIDIAN_ROOT
 SOURCE_DIR="zettelkasten"
+# SOURCE_DIR="inbox"
 DEST_DIR="notes"
-
 
 # Iterate through all markdown files in the source directory
 find "$VAULT_DIR/$SOURCE_DIR" -type f -name "*.md" | while read -r file; do
