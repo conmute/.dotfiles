@@ -2,9 +2,9 @@
 
 # Directory containing markdown files
 VAULT_DIR=$OBSIDIAN_ROOT
-SOURCE_DIR="zettelkasten"
+SOURCE_DIR="21 ZETTELKASTEN"
 # SOURCE_DIR="inbox"
-DEST_DIR="notes"
+DEST_DIR="22 NOTES"
 
 # Iterate through all markdown files in the source directory
 find "$VAULT_DIR/$SOURCE_DIR" -type f -name "*.md" | while read -r file; do

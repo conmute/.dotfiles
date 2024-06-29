@@ -43,7 +43,7 @@ return {
         min_chars = 2,
       },
 
-      notes_subdir = "inbox",
+      notes_subdir = "11 INBOX",
       new_notes_location = "notes_subdir",
 
       disable_frontmatter = true,
@@ -51,7 +51,7 @@ return {
       templates = {
 
         -- subdir = "templates",
-        subdir = "Utility/Templates",
+        subdir = "99 Utility/Templates",
         date_format = "%Y-%m-%d",
         time_format = "%H:%M:%S",
       },
