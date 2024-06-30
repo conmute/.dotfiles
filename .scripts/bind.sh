@@ -30,6 +30,14 @@ ln -s $PARENT_DIR/.gitconfig ~/.gitconfig
 ln -s $PARENT_DIR/.gitignore ~/.gitignore
 ln -s $PARENT_DIR/.gitignore_global ~/.gitignore_global
 
+# setup wezterm
+rm ~/.wezterm.lua
+ln -s $PARENT_DIR/.wezterm.lua ~/.wezterm.lua
+
+# yazi link
+rm -rf ~/.config/yazi
+ln -s $PARENT_DIR/.config/yazi ~/.config/yazi
+
 # User .env config
 # mv ~/.env{,.bak}
 rm ~/.env.example
