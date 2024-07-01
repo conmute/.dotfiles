@@ -29,7 +29,6 @@ test -f .nvmrc && nvm use
 
 # Obsidian
 
-alias oo='cd $OBSIDIAN_ROOT'
-alias or='vim $OBSIDIAN_ROOT/*.md'
 ## This command to automatically publish things outside! To be configured…
+## Should be in `bin/obsidian`...
 # alias ou='cd $HOME/notion-obsidian-sync-zazencodes && node batchUpload.js --lastmod-days-window 5'

@@ -23,7 +23,8 @@
 
 -- local obsidianRoot = os.getenv("OBSIDIAN_ROOT")
 local obsidianRoot = vim.env.OBSIDIAN_ROOT
-
+local okDirName = "21 ZETTELKASTEN"
+local notesDirName = "notes"
 if obsidianRoot then
   -- navigate to vault
   vim.keymap.set("n", "<leader>oo", ":cd " .. obsidianRoot .. "<cr>")
@@ -35,8 +36,16 @@ if obsidianRoot then
   vim.keymap.set("n", "<leader>ot", ":s/\\(# \\)[^_]*_/\\1/ | s/-/ /g<cr>")
   --
   -- search for files in full vault
-  vim.keymap.set("n", "<leader>of", ':Telescope find_files search_dirs={"' .. obsidianRoot .. '/notes"}<cr>')
-  vim.keymap.set("n", "<leader>or", ':Telescope live_grep search_dirs={"' .. obsidianRoot .. '/notes"}<cr>')
+  vim.keymap.set(
+    "n",
+    "<leader>of",
+    ':Telescope find_files search_dirs={"' .. obsidianRoot .. "/" .. notesDirName .. '"}<cr>'
+  )
+  vim.keymap.set(
+    "n",
+    "<leader>or",
+    ':Telescope live_grep search_dirs={"' .. obsidianRoot .. "/" .. notesDirName .. '"}<cr>'
+  )
 
   --
   --
@@ -46,7 +55,43 @@ if obsidianRoot then
   --
   -- for review workflow
   -- move file in current buffer to zettelkasten folder
-  vim.keymap.set("n", "<leader>ok", ":!mv '%:p' " .. obsidianRoot .. "/zettelkasten<cr>:bd<cr>")
+  -- vim.keymap.set("n", "<leader>ok", ":!mv '%:p' " .. obsidianRoot .. "/" .. okDirName .. "<cr>:bd<cr>")
+  vim.keymap.set("n", "<leader>ok", function()
+    -- Get the full path of the current file
+    local current_file_path = vim.fn.expand("%:p")
+    -- Get the parent directory path
+    local parent_dir_path = vim.fn.fnamemodify(current_file_path, ":h")
+    -- Get the parent directory name
+    local parent_dir_name = vim.fn.fnamemodify(parent_dir_path, ":t")
+    -- Get the current file name without the extension
+    local file_name = vim.fn.expand("%:t:r")
+
+    local command = "mv '" .. current_file_path .. "' '" .. obsidianRoot .. "/" .. okDirName .. "'"
+    local successMessage = "Moved file: " .. file_name .. " to " .. okDirName
+    local failedMessage = "Failed to move file: " .. file_name
+
+    -- Check if the parent directory name and the file name are the same
+    if parent_dir_name == file_name then
+      -- Define the command to move the current file
+      command = "mv '" .. parent_dir_path .. "' '" .. obsidianRoot .. "/" .. okDirName .. "'"
+
+      successMessage = "Moved directory: " .. parent_dir_path .. " to " .. okDirName
+      failedMessage = "Failed to move directory: " .. parent_dir_path
+    end
+    -- vim.api.nvim_command(command)
+    -- Execute the move command
+    local result = os.execute(command)
+
+    -- Check the result and notify the user
+    if result == 0 then
+      vim.notify(successMessage, vim.log.levels.INFO)
+    else
+      vim.notify(failedMessage, vim.log.levels.ERROR)
+    end
+
+    -- Close the buffer
+    vim.api.nvim_command("bd")
+  end)
   -- delete file in current buffer
   vim.keymap.set("n", "<leader>odd", ":!rm '%:p'<cr>:bd<cr>")
 else

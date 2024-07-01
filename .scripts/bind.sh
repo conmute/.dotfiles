@@ -21,6 +21,8 @@ ln -s $PARENT_DIR/.tmux ~/.tmux
 # setup obsidian new note
 ln -s $PARENT_DIR/bin/obsidian/on ~/bin/on
 ln -s $PARENT_DIR/bin/obsidian/og ~/bin/og
+ln -s $PARENT_DIR/bin/obsidian/oo ~/bin/oo
+ln -s $PARENT_DIR/bin/obsidian/oinbox ~/bin/oinbox
 
 # setup git config
 rm ~/.gitignore
