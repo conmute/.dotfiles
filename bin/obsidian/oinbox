@@ -1,3 +1,0 @@
-#!/bin/zsh
-
-nvim $OBSIDIAN_ROOT/11\ INBOX/**/*.md
