@@ -41,3 +41,7 @@ ln -s $PARENT_DIR/.env.example ~/.env.example
 
 # .dot_profile
 echo "source \"$PARENT_DIR/.dot_profile.sh\"" >>~/.zshrc
+
+# bin files
+mkdir -p ~/bin
+ln -s $PARENT_DIR/bin/gitscripts/github_download_folder ~/bin/github_download_folder

@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Check if the URL and destination are provided
+if [ -z "$1" ] || [ -z "$2" ]; then
+	echo "Usage: $0 <GitHub URL> <Destination>"
+	exit 1
+fi
+
+# Extract information from the URL
+URL=$1
+DESTINATION=$2
+REPO=$(echo $URL | sed -n 's|https://github.com/\([^/]*\)/\([^/]*\)/tree/\([^/]*\)/\(.*\)|\1/\2|p')
+BRANCH=$(echo $URL | sed -n 's|https://github.com/\([^/]*\)/\([^/]*\)/tree/\([^/]*\)/\(.*\)|\3|p')
+FOLDER=$(echo $URL | sed -n 's|https://github.com/\([^/]*\)/\([^/]*\)/tree/\([^/]*\)/\(.*\)|\4|p')
+
+# Validate extracted information
+if [ -z "$REPO" ] || [ -z "$BRANCH" ] || [ -z "$FOLDER" ]; then
+	echo "Invalid GitHub URL"
+	exit 1
+fi
+
+# Function to download files and handle nested folders
+download_files() {
+	local FOLDER_PATH=$1
+	local DEST_PATH=$2
+
+	# Get list of items in the folder
+	ITEMS=$(curl -s "https://api.github.com/repos/$REPO/contents/$FOLDER_PATH?ref=$BRANCH")
+
+	# Iterate over each item
+	echo "$ITEMS" | jq -r '.[] | @base64' | while read -r ITEM; do
+		ITEM=$(echo "$ITEM" | base64 --decode)
+		ITEM_TYPE=$(echo "$ITEM" | jq -r '.type')
+		ITEM_PATH=$(echo "$ITEM" | jq -r '.path')
+
+		if [ "$ITEM_TYPE" == "file" ]; then
+			FILE_URL=$(echo "$ITEM" | jq -r '.download_url')
+			mkdir -p "$DEST_PATH/$(dirname "$ITEM_PATH")"
+			echo "Downloading file: $ITEM_PATH"
+			wget --progress=dot:giga -O "$DEST_PATH/$ITEM_PATH" "$FILE_URL" 2>&1 | grep --line-buffered "%" | sed -u -e "s|^|$ITEM_PATH: |"
+		elif [ "$ITEM_TYPE" == "dir" ]; then
+			echo "Entering directory: $ITEM_PATH"
+			download_files "$ITEM_PATH" "$DEST_PATH"
+		fi
+	done
+}
+
+# Start downloading files and folders
+download_files "$FOLDER" "$DESTINATION"
+
+echo "Download completed."
