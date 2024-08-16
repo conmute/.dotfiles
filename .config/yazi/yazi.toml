@@ -1,3 +1,10 @@
 
 [manager]
 show_symlink = false
+ratio = [1, 2, 5]
+
+[preview]
+# max_width       = 600
+# max_height      = 900
+max_width       = 3000
+max_height      = 4200

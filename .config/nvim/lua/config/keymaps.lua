@@ -48,7 +48,7 @@ keymap.set("n", "<Leader>t", ":NvimTreeToggle<Return>", opts)
 -- keymap.set("n", "<C-S-k>", "<C-w>+")
 -- keymap.set("n", "<C-S-j>", "<C-w>-")
 
--- Diagnostics
-keymap.set("n", "<C-j>", function()
-  vim.diagnostic.goto_next()
-end, opts)
+-- -- Diagnostics
+-- keymap.set("n", "<C-j>", function()
+--   vim.diagnostic.goto_next()
+-- end, opts)

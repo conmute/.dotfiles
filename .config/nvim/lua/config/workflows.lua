@@ -13,7 +13,7 @@
 -- >>> ))) <leader>of # format title
 --
 -- # END OF DAY/WEEK REVIEW
--- >>> or # review notes in inbox
+-- >>> oinbox # review notes in inbox
 -- >>>
 -- >>> ))) <leader>ok # inside vim now, move to zettelkasten
 -- >>> ))) <leader>odd # or delete
