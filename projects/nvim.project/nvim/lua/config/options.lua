@@ -49,3 +49,9 @@ vim.opt.mouse = ""
 vim.opt.foldenable = false
 -- Add asterisks in block comments
 vim.opt.formatoptions:append({ "r" })
+
+vim.filetype.add({
+  extension = {
+    mdx = "mdx",
+  },
+})

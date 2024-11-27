@@ -24,8 +24,8 @@ export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-# Check if .nvmrc file exists
-test -f .nvmrc && nvm use
+# # Check if .nvmrc file exists
+# test -f .nvmrc && nvm use
 
 # Obsidian
 
@@ -38,3 +38,5 @@ test -f .nvmrc && nvm use
 # TODO: add to basic config to preinstall asdf, would be even btter
 # asdf for erlang/elixir version management
 . /usr/local/opt/asdf/libexec/asdf.sh
+
+exec fish

@@ -1,20 +1,7 @@
 #!/bin/bash
 
 brew install fish
-brew install iterm2
-brew install ghq
-brew install tmux
-brew install nvm
 
-# file navigation
-echo "Preparing file navigation"
-brew install yazi
-# pdf preview
-brew install poppler
-# video thumbnail preview
-brew install ffmpegthumbnailer
-# archive preview
-brew install unar
 # json preview
 brew install jq
 # for file searching

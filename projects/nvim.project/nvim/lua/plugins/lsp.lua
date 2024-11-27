@@ -12,6 +12,7 @@ return {
         "shfmt",
         -- "tailwindcss-language-server",
         "typescript-language-server",
+        "emmet-language-server",
         "css-lsp",
       })
     end,
