@@ -18,6 +18,6 @@ brew install rg
 # for quick subtree navigation
 brew install fzf
 # historical directories navigation
-brew install zoxi
+brew install zoxide
 
 echo "Follow log to finish nvm installation!"

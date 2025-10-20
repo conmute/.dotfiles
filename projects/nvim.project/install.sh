@@ -1,4 +1,4 @@
 #!/bin/bash
 
-brew install nvm
+brew install nvim
 brew install lazygit
