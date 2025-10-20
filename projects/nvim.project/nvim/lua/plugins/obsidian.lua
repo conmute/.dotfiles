@@ -57,9 +57,11 @@ return {
       },
 
       workspaces = {
+        -- TODO: no longer using this path, perhaps we should use env variable here?
         {
           name = "GTD",
-          path = "/Users/ross/.ghq/github.com/conmute/GTD",
+          -- path = "/Users/ross/.ghq/github.com/conmute/GTD",
+          path = "/Users/Roman.Koss/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Cloud",
         },
       },
 

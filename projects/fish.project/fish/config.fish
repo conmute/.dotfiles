@@ -47,5 +47,6 @@ if test -f $LOCAL_CONFIG
     source $LOCAL_CONFIG
 end
 
-# asdf to enable it in my CLI
-source /usr/local/opt/asdf/libexec/asdf.fish
+# # TODO: on install on new machine, it didnt work ;(
+# # asdf to enable it in my CLI
+# source /usr/local/opt/asdf/libexec/asdf.fish

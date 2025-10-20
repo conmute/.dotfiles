@@ -34,9 +34,10 @@ export NVM_DIR="$HOME/.nvm"
 # alias ou='cd $HOME/notion-obsidian-sync-zazencodes && node batchUpload.js --lastmod-days-window 5'
 #
 
-# TODO: test if asdf is installed
-# TODO: add to basic config to preinstall asdf, would be even btter
-# asdf for erlang/elixir version management
-. /usr/local/opt/asdf/libexec/asdf.sh
+# # TODO: on install on new machine, it didnt work ;(
+# # TODO: test if asdf is installed
+# # TODO: add to basic config to preinstall asdf, would be even btter
+# # asdf for erlang/elixir version management
+# . /usr/local/opt/asdf/libexec/asdf.sh
 
 exec fish

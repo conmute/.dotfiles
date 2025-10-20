@@ -4,11 +4,11 @@ Configurations are hard and tedius, perhaps it would be better to version contro
 
 ## Details
 
-Keeping in `~/.dotfiles` folder I can keep setup and configuration here to share with others.
+Keeping in `<PATH_TO>/.dotfiles` folder I can keep setup and configuration here to share with others. Recommending to use `ghq`.
 
 To make it work i symlink or reference to where it belongs, instead of whitelisting files from the `~` folder.
 
-The symlink is done over with `.scripts/bind.sh` files
+The symlink is done over with `./scripts/bindprojects.sh` files
 
 ## Wishes…
 
@@ -19,6 +19,7 @@ I hope to have configuraitons like this to be…
 - ✅ 🚧 sharable, maintanable and forkable, like we do on github
 - ✅ 🚧 modular, like we can enable certain pieces
 - ✅ 🚧 optable, not everything is needed - just add some of them
+- ✅ 🚧 path reliable, depending on user / setup / etc, it should be reliable in path
 - customizable, like enable overrides which are available
 - avoiding unwanted abstractions…
 
