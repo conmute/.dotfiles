@@ -25,3 +25,10 @@ brew install lsd
 
 # I am listening to spotify
 brew install --cask spotify
+
+# I am using local llms...
+brew install ollama
+brew install ollama-app
+
+# for development i use..
+brew install --cask insomnia
