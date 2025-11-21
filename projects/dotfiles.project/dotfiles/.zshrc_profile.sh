@@ -11,6 +11,17 @@ LC_ALL="en_US.UTF-8"
 
 export PATH=~/bin:$PATH
 
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# # For compilers to find openjdk you may need to set:
+# export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+# # For compilers to find llvm you may need to set:
+# export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+# export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+
 source $HOME/.env
 
 # fzf
