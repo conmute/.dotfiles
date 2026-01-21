@@ -32,6 +32,3 @@ brew install ollama-app
 
 # for development i use..
 brew install --cask insomnia
-
-# for ftp and other sync
-brew install --cask mountain-duck
