@@ -14,3 +14,9 @@ brew install llvm
 brew install openjdk
 # For the system Java wrappers to find this JDK, symlink it with
 sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+
+# # Cursor agent, stop crying!
+# # @see: https://forum.cursor.com/t/zsh-terminal-state-is-not-persistent-in-ai-assistant-due-to-dump-zsh-state-command-not-found-error/133594/41
+# sudo echo '#!/bin/bash
+# # No-op script for dump_zsh_state
+# exit 0' > /usr/local/bin/dump_zsh_state && sudo chmod +x /usr/local/bin/dump_zsh_state

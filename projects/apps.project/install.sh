@@ -2,11 +2,11 @@
 
 # # Always check what you're installing first
 # brew info --cask <package>
-# 
+#
 # # Look at the download URL
 # brew cat --cask <package>
 # brew cat --cask <package> | grep -A 2 "url"
-# 
+#
 # # Keep Homebrew updated
 # brew update
 
@@ -32,3 +32,6 @@ brew install ollama-app
 
 # for development i use..
 brew install --cask insomnia
+
+# for ftp and other sync
+brew install --cask mountain-duck
