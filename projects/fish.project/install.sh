@@ -14,3 +14,6 @@ brew install fzf
 brew install zoxide
 
 echo "Follow log to finish nvm installation!"
+
+echo "fish created a claude-work for private $ANTHROPIC_API_KEY, with a separate ~/.claude-work directory"
+mkdir -p ~/.claude-work

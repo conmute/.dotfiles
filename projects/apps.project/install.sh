@@ -32,3 +32,6 @@ brew install ollama-app
 
 # for development i use..
 brew install --cask insomnia
+
+# The favorite AI...
+brew install --cask claude
