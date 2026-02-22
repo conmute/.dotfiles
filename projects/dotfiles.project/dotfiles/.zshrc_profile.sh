@@ -35,8 +35,7 @@ source $HOME/.env
 export FZF_DEFAULT_COMMAND='fd --type f --exclude .git --ignore-file ~/.gitignore'
 export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+# nvm is already loaded in .zshrc — don't load it again here
 
 # # Check if .nvmrc file exists
 # test -f .nvmrc && nvm use
@@ -54,4 +53,8 @@ export NVM_DIR="$HOME/.nvm"
 # # asdf for erlang/elixir version management
 # . /usr/local/opt/asdf/libexec/asdf.sh
 
-exec fish
+# Launch fish for non-tmux terminals (Cursor, VS Code, etc.)
+# tmux launches fish directly via default-shell, so skip there
+if [ -z "$TMUX" ]; then
+  exec fish
+fi

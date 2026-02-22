@@ -61,3 +61,8 @@ if not contains $_asdf_shims $PATH
     set -gx --prepend PATH $_asdf_shims
 end
 set --erase _asdf_shims
+
+# tmux-spire CLI (only inside tmux)
+if set -q TMUX; and set -q SPIRE_BIN; and not contains $SPIRE_BIN $PATH
+    set -gx --prepend PATH $SPIRE_BIN
+end
