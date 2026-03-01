@@ -35,3 +35,6 @@ brew install --cask insomnia
 
 # The favorite AI...
 brew install --cask claude
+
+# Closer to automate Google Calendar
+brew install gcalcli

@@ -18,8 +18,14 @@ local function show_welcome()
   end
 end
 
--- Since this file loads on VeryLazy (after UIEnter), just show the notification
-vim.defer_fn(show_welcome, 100)
+-- Since this file loads on VeryLazy (after UIEnter), just show the notification and play sound
+vim.defer_fn(function()
+  show_welcome()
+  vim.fn.jobstart({
+    "afplay",
+    vim.fn.expand("~/.local/share/gamify/sounds/nvim-start.wav"),
+  })
+end, 100)
 
 -- Auto-reload files changed outside of Neovim
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {

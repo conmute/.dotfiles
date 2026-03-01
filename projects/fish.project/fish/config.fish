@@ -20,6 +20,17 @@ alias ox 'vim "$OBSIDIAN_ROOT/11 INBOX/*.md"'
 
 command -qv nvim && alias vim nvim
 
+# Gamified claude — play level-start sound on launch
+function claude --wraps=claude
+    afplay ~/.local/share/gamify/sounds/app-start.wav &
+    command claude $argv
+end
+
+# Gamified shell — random HK combat sound on every command (interactive only)
+function __gamify_preexec --on-event fish_preexec
+    hk-action
+end
+
 set -gx EDITOR nvim
 
 set -gx PATH bin $PATH
