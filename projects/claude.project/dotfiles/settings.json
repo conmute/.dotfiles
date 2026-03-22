@@ -1,0 +1,65 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gamify play attention &"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gamify play work-done &"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gamify play message-sent &"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gamify play attention &"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "pdm-ci@podium-plugins": true,
+    "pdm-feature-dev@podium-plugins": true,
+    "pdm-git@podium-plugins": true,
+    "pdm-jira@podium-plugins": true,
+    "pdm-merge-request@podium-plugins": true,
+    "pdm-required-hooks@podium-plugins": true,
+    "pdm-skill-create@podium-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "podium-plugins": {
+      "source": {
+        "source": "git",
+        "url": "git@github.com:podium-internal/podium-plugin-marketplace.git"
+      }
+    }
+  }
+}

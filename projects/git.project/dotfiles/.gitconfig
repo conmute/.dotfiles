@@ -2,7 +2,8 @@
 	excludesfile = ~/.gitignore
 	editor = nvim
 	ignorecase = false
-	hooksPath = /Users/Roman.Koss/.git-hooks
+[init]
+	templateDir = ~/.git-templates
 [push]
   default = simple
 [color]

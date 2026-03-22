@@ -22,8 +22,9 @@ end
 vim.defer_fn(function()
   show_welcome()
   vim.fn.jobstart({
-    "afplay",
-    vim.fn.expand("~/.local/share/gamify/sounds/nvim-start.wav"),
+    "gamify",
+    "play",
+    "nvim-start",
   })
 end, 100)
 
