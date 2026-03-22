@@ -1,0 +1,144 @@
+#!/bin/bash
+# gamify — central sound playback with mute toggle and volume control
+#
+# Usage:
+#   gamify play <name>     Play sound by name (respects mute + volume)
+#   gamify mute            Mute all sounds
+#   gamify unmute          Unmute all sounds
+#   gamify toggle          Toggle mute state
+#   gamify volume [0-100]  Get or set volume (default 100)
+#   gamify status          Show mute + volume
+#   gamify kill            Kill all playing sounds
+#
+# Sound name resolution (in $SOUNDS_DIR):
+#   <name>/ with subdirs  → layered: random file from each subdir, simultaneous
+#   <name>/ with wavs     → pick one random file, play it
+#   <name>.wav             → play directly
+
+set -euo pipefail
+
+STATE_DIR="${GAMIFY_STATE_DIR:-$HOME/.local/share/gamify}"
+SOUNDS_DIR="${GAMIFY_SOUNDS:-$HOME/.local/share/gamify/sounds}"
+MUTED_FILE="$STATE_DIR/muted"
+VOLUME_FILE="$STATE_DIR/volume"
+
+[[ -d "$STATE_DIR" ]] || mkdir -p "$STATE_DIR"
+
+is_muted() {
+  [[ -f "$MUTED_FILE" ]]
+}
+
+get_volume() {
+  if [[ -f "$VOLUME_FILE" ]]; then
+    echo "$(<"$VOLUME_FILE")"
+  else
+    echo 100
+  fi
+}
+
+pick_random() {
+  local files=("$1"/*.wav)
+  [[ -e "${files[0]}" ]] || return 1
+  echo "${files[RANDOM % ${#files[@]}]}"
+}
+
+play_file() {
+  afplay --volume "$1" "$2" &
+}
+
+cmd="${1:-status}"
+shift 2>/dev/null || true
+
+case "$cmd" in
+  play)
+    name="${1:-}"
+    [[ -z "$name" ]] && { echo "Usage: gamify play <name>" >&2; exit 1; }
+    is_muted && exit 0
+    vol=$(get_volume)
+    (( vol == 0 )) && exit 0
+    if (( vol == 100 )); then
+      af_vol=1
+    else
+      af_vol="0.$(printf '%02d' "$vol")"
+    fi
+
+    target="$SOUNDS_DIR/$name"
+
+    # Directory with subdirectories → layered mode
+    if [[ -d "$target" ]]; then
+      subdirs=()
+      for d in "$target"/*/; do
+        [[ -d "$d" ]] && subdirs+=("$d")
+      done
+
+      if (( ${#subdirs[@]} > 0 )); then
+        # Layered mode: play one random file from each subdir
+        for layer in "${subdirs[@]}"; do
+          # Check .chance file for probability (default 100%)
+          if [[ -f "$layer/.chance" ]]; then
+            chance=$(<"$layer/.chance")
+            roll=$(( RANDOM % 100 ))
+            (( roll >= chance )) && continue
+          fi
+          file=$(pick_random "$layer") || continue
+          play_file "$af_vol" "$file"
+        done
+        wait
+        exit 0
+      fi
+
+      # Directory with only wav files → random mode
+      file=$(pick_random "$target") || { echo "No .wav files in $target" >&2; exit 1; }
+      exec afplay --volume "$af_vol" "$file"
+    fi
+
+    # Single file mode
+    if [[ -f "$target.wav" ]]; then
+      exec afplay --volume "$af_vol" "$target.wav"
+    fi
+
+    echo "Unknown sound: $name" >&2
+    exit 1
+    ;;
+  mute)
+    touch "$MUTED_FILE"
+    ;;
+  unmute)
+    rm -f "$MUTED_FILE"
+    ;;
+  toggle)
+    if is_muted; then
+      rm -f "$MUTED_FILE"
+    else
+      touch "$MUTED_FILE"
+    fi
+    ;;
+  volume)
+    new_vol="${1:-}"
+    if [[ -z "$new_vol" ]]; then
+      get_volume
+    else
+      if [[ "$new_vol" =~ ^[0-9]+$ ]] && (( new_vol >= 0 && new_vol <= 100 )); then
+        echo "$new_vol" > "$VOLUME_FILE"
+      else
+        echo "Volume must be 0-100" >&2
+        exit 1
+      fi
+    fi
+    ;;
+  status)
+    if is_muted; then
+      echo "Muted: yes, Volume: $(get_volume)"
+    else
+      echo "Muted: no, Volume: $(get_volume)"
+    fi
+    ;;
+  kill)
+    killall afplay 2>/dev/null || true
+    ;;
+  *)
+    echo "Unknown command: $cmd" >&2
+    echo "Usage: gamify {play|mute|unmute|toggle|volume|status|kill}" >&2
+    exit 1
+    ;;
+esac
