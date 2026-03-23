@@ -1,0 +1,11 @@
+# Cloudflare Tunnel config
+# tunnel and credentials-file are populated after running:
+#   cloudflared tunnel login
+#   cloudflared tunnel create productforge
+tunnel: TUNNEL_ID_HERE
+credentials-file: /root/.cloudflared/TUNNEL_ID_HERE.json
+
+ingress:
+  - hostname: "*.{{ domain }}"
+    service: http://localhost:80
+  - service: http_status:404

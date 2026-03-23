@@ -1,0 +1,88 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
+
+- name: Install essential packages
+  apt:
+    name:
+      - curl
+      - wget
+      - git
+      - vim
+      - htop
+      - tree
+      - jq
+      - unzip
+      - rsync
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - python3-pip
+    state: present
+
+- name: Set timezone
+  community.general.timezone:
+    name: Europe/Warsaw
+
+- name: Set swappiness to 10
+  sysctl:
+    name: vm.swappiness
+    value: "10"
+    state: present
+
+# Prevent WiFi from going to sleep — keeps Pi reachable
+# NetworkManager level (may not apply to Broadcom driver on Pi 5)
+- name: Disable WiFi power management (NetworkManager)
+  copy:
+    dest: /etc/NetworkManager/conf.d/wifi-powersave-off.conf
+    content: |
+      [connection]
+      wifi.powersave = 2
+  notify: restart networkmanager
+
+# Driver level fallback — ensures power save is off even if NM doesn't propagate
+- name: Disable WiFi power management (driver level)
+  copy:
+    dest: /etc/systemd/system/wifi-powersave-off.service
+    content: |
+      [Unit]
+      Description=Disable WiFi power save
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/sbin/iw dev wlan0 set power_save off
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Install iw package
+  apt:
+    name: iw
+    state: present
+
+- name: Enable WiFi power save disable service
+  systemd:
+    name: wifi-powersave-off
+    enabled: yes
+    daemon_reload: yes
+    state: started
+
+# Prevent the system from sleeping/suspending
+- name: Disable system suspend
+  systemd:
+    name: "{{ item }}"
+    masked: yes
+  loop:
+    - sleep.target
+    - suspend.target
+    - hibernate.target
+    - hybrid-sleep.target

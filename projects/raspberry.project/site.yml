@@ -1,0 +1,23 @@
+---
+- name: Provision productforge (Raspberry Pi 5)
+  hosts: productforge
+  become: true
+
+  vars:
+    ssd_mount: /mnt/ssd
+    app_base: /opt/productforge
+    docker_data_root: "{{ ssd_mount }}/docker"
+    stacks_dir: "{{ ssd_mount }}/stacks"
+    configs_dest: "{{ app_base }}/configs"
+    pi_user: ross
+
+  roles:
+    - base
+    - security
+    - ssd
+    - docker
+    - tailscale
+    - cloudflare
+    - configs
+    - role: stacks
+      tags: [deploy]

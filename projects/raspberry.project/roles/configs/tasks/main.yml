@@ -1,0 +1,42 @@
+---
+- name: Ensure app base directory exists
+  file:
+    path: "{{ app_base }}"
+    state: directory
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+    mode: "0755"
+
+- name: Ensure config destination directory exists
+  file:
+    path: "{{ configs_dest }}"
+    state: directory
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+    mode: "0755"
+
+- name: Sync config files to Pi
+  synchronize:
+    src: "{{ playbook_dir }}/configs/"
+    dest: "{{ configs_dest }}/"
+    recursive: yes
+    rsync_opts:
+      - "--exclude=.env"
+  become: false
+
+- name: Fix ownership of synced configs
+  file:
+    path: "{{ configs_dest }}"
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+    recurse: yes
+
+# Core stack compose — copy (not symlink) so .env resolves correctly
+# docker compose looks for .env relative to the compose file's real path
+- name: Copy core stack docker-compose.yml
+  copy:
+    src: "{{ configs_dest }}/opt/productforge/stacks/core/docker-compose.yml"
+    dest: "{{ stacks_dir }}/core/docker-compose.yml"
+    remote_src: yes
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"

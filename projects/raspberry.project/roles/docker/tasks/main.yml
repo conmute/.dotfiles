@@ -1,0 +1,81 @@
+---
+- name: Add Docker GPG key
+  get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /usr/share/keyrings/docker.gpg
+    mode: "0644"
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "deb [arch=arm64 signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Install Docker Engine
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+    update_cache: yes
+
+- name: Add user to docker group
+  user:
+    name: "{{ pi_user }}"
+    groups: docker
+    append: yes
+
+- name: Ensure /etc/docker exists
+  file:
+    path: /etc/docker
+    state: directory
+
+# Deploy daemon.json BEFORE starting Docker so data-root is correct from the start
+- name: Ensure configs destination exists
+  file:
+    path: "{{ configs_dest }}/etc/docker"
+    state: directory
+    recurse: yes
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+
+- name: Sync daemon.json to Pi
+  copy:
+    src: "{{ playbook_dir }}/configs/etc/docker/daemon.json"
+    dest: "{{ configs_dest }}/etc/docker/daemon.json"
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+  register: daemon_json
+
+- name: Symlink Docker daemon.json
+  file:
+    src: "{{ configs_dest }}/etc/docker/daemon.json"
+    dest: /etc/docker/daemon.json
+    state: link
+    force: yes
+  notify: restart docker
+
+# Ensure Docker waits for SSD mount before starting (prevents data-on-SD-card on reboot)
+- name: Create Docker systemd override directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: Ensure Docker starts after SSD is mounted
+  copy:
+    dest: /etc/systemd/system/docker.service.d/after-ssd.conf
+    content: |
+      [Unit]
+      After=mnt-ssd.mount
+      Requires=mnt-ssd.mount
+
+- name: Flush handlers before starting Docker
+  meta: flush_handlers
+
+- name: Enable and start Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+    daemon_reload: yes

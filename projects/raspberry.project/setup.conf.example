@@ -1,0 +1,28 @@
+# Productforge Setup Configuration
+# Copy this to setup.conf and fill in your values before running ./setup.sh
+
+# Pi connection
+PI_HOST=productforge.local
+PI_USER=ross
+SSH_KEY=~/.ssh/id_productforge
+
+# SSD device path — the DISK, not partition (setup.sh creates the partition)
+# Run: ssh ross@productforge.local "lsblk" to find it
+# Common values: /dev/sda (USB SSD), /dev/nvme0n1 (NVMe SSD on Pi 5)
+SSD_DISK=/dev/nvme0n1
+
+# Domain (use productforge.local if you don't have one yet)
+DOMAIN=productforge.local
+
+# PostgreSQL admin password (generate with: openssl rand -hex 32)
+POSTGRES_ADMIN_PASSWORD=
+
+# Tailscale (leave empty to skip, set up manually later)
+# Get auth key from: https://login.tailscale.com/admin/settings/keys
+# Create a reusable, pre-approved auth key
+TAILSCALE_AUTH_KEY=
+
+# Cloudflare Tunnel (leave empty to skip, set up manually later)
+# Go to: Cloudflare Zero Trust → Networks → Tunnels → Create
+# Copy the tunnel token (starts with eyJ...)
+CLOUDFLARE_TUNNEL_TOKEN=

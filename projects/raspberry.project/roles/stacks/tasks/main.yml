@@ -1,0 +1,44 @@
+---
+- name: Create Docker networks
+  community.docker.docker_network:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - web
+    - internal
+
+- name: Ensure volume directories exist
+  file:
+    path: "{{ ssd_mount }}/volumes/{{ item }}"
+    state: directory
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+  loop:
+    - caddy
+    - caddy-config
+    - postgres
+    - redis
+    - redis-durable
+
+- name: Copy core stack .env if not present
+  copy:
+    src: "{{ playbook_dir }}/configs/opt/productforge/stacks/core/.env.example"
+    dest: "{{ stacks_dir }}/core/.env"
+    force: no
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+
+- name: Read core stack .env
+  slurp:
+    src: "{{ stacks_dir }}/core/.env"
+  register: core_env
+
+- name: Fail if default password not changed
+  fail:
+    msg: "Edit {{ stacks_dir }}/core/.env and set a real POSTGRES_ADMIN_PASSWORD before provisioning."
+  when: "'CHANGE_ME' in (core_env.content | b64decode)"
+
+- name: Deploy core stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ stacks_dir }}/core"
+    state: present

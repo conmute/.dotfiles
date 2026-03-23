@@ -1,0 +1,70 @@
+---
+- name: Install security packages
+  apt:
+    name:
+      - ufw
+      - fail2ban
+      - unattended-upgrades
+    state: present
+
+# Always allow SSH from local network (192.168.0.0/24)
+- name: Allow SSH from local network
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+    src: 192.168.0.0/24
+
+# Allow all traffic on Tailscale interface
+- name: Allow Tailscale interface
+  ufw:
+    rule: allow
+    interface: tailscale0
+    direction: in
+
+# Allow Cloudflare Tunnel (outbound only, no rule needed — UFW allows outbound by default)
+
+- name: Set UFW default deny incoming
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: Set UFW default allow outgoing
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
+- name: Configure fail2ban
+  template:
+    src: jail.local.j2
+    dest: /etc/fail2ban/jail.local
+  notify: restart fail2ban
+
+- name: Enable fail2ban
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: Enable unattended-upgrades
+  apt:
+    name: unattended-upgrades
+    state: present
+
+- name: Harden SSH - disable password auth
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+  notify: restart sshd
+
+- name: Harden SSH - disable root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+  notify: restart sshd

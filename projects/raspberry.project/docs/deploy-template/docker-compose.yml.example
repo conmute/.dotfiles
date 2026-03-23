@@ -1,0 +1,18 @@
+services:
+  app:
+    image: myapp:latest
+    restart: unless-stopped
+    networks:
+      - web
+      - internal
+    labels:
+      caddy: http://myapp.${DOMAIN}
+      caddy.reverse_proxy: "{{upstreams 3000}}"
+    env_file:
+      - .env
+
+networks:
+  web:
+    external: true
+  internal:
+    external: true

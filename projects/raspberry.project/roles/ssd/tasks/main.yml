@@ -1,0 +1,37 @@
+---
+- name: Create SSD mount point
+  file:
+    path: "{{ ssd_mount }}"
+    state: directory
+
+- name: Get SSD device UUID
+  shell: blkid -s UUID -o value {{ ssd_device | default('/dev/sda1') }}
+  register: ssd_uuid
+  changed_when: false
+
+- name: Fail if SSD UUID not found
+  fail:
+    msg: "Could not determine UUID for {{ ssd_device | default('/dev/sda1') }}. Check device path. Set ssd_device in inventory if needed."
+  when: ssd_uuid.stdout | length == 0
+
+- name: Add SSD to fstab
+  mount:
+    path: "{{ ssd_mount }}"
+    src: "UUID={{ ssd_uuid.stdout }}"
+    fstype: ext4
+    opts: defaults,noatime
+    state: mounted
+
+- name: Create directory structure on SSD
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ pi_user }}"
+    group: "{{ pi_user }}"
+  loop:
+    - "{{ ssd_mount }}/docker"
+    - "{{ ssd_mount }}/stacks"
+    - "{{ ssd_mount }}/stacks/core"
+    - "{{ ssd_mount }}/volumes"
+    - "{{ ssd_mount }}/sites"
+    - "{{ ssd_mount }}/backups"

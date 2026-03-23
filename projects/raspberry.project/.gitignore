@@ -1,0 +1,5 @@
+.env
+!.env.example
+setup.conf
+!setup.conf.example
+*.retry

@@ -1,0 +1,106 @@
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:2.9-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - /mnt/ssd/sites:/sites:ro
+    networks:
+      - web
+    environment:
+      - CADDY_INGRESS_NETWORKS=web
+    labels:
+      caddy_0: http://conmute.com
+      caddy_0.root: "* /sites/conmute"
+      caddy_0.file_server:
+      caddy_1: http://www.conmute.com
+      caddy_1.root: "* /sites/conmute"
+      caddy_1.file_server:
+
+  # Shared PostgreSQL — one cluster, one database per app
+  # Apps connect via: postgres://<app>:<password>@postgres:5432/<app>
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+    networks:
+      - internal
+
+  # Shared Redis — one instance for cache, use key prefixes per app
+  # Apps connect via: redis://redis:6379/0 (with app-prefixed keys)
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - internal
+
+  # Durable Redis — for sessions, queues, data you can't lose
+  # Apps connect via: redis://redis-durable:6379/0 (host access: localhost:6380)
+  redis-durable:
+    image: redis:7-alpine
+    container_name: redis-durable
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - redis_durable_data:/data
+    command: redis-server --appendonly yes --appendfsync everysec --maxmemory 256mb
+    networks:
+      - internal
+
+networks:
+  web:
+    external: true
+  internal:
+    external: true
+
+volumes:
+  caddy_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ssd/volumes/caddy
+  caddy_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ssd/volumes/caddy-config
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ssd/volumes/postgres
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ssd/volumes/redis
+  redis_durable_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ssd/volumes/redis-durable

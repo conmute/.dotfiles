@@ -1,0 +1,24 @@
+---
+- name: Install Tailscale
+  shell: curl -fsSL https://tailscale.com/install.sh | sh
+  args:
+    creates: /usr/bin/tailscale
+
+- name: Enable tailscaled
+  systemd:
+    name: tailscaled
+    enabled: yes
+    state: started
+
+- name: Check Tailscale status
+  command: tailscale status
+  register: ts_status
+  changed_when: false
+  failed_when: false
+
+- name: Prompt for Tailscale auth if not connected
+  debug:
+    msg: |
+      Tailscale is not authenticated. SSH into the Pi and run:
+        sudo tailscale up --ssh --accept-routes
+  when: ts_status.rc != 0

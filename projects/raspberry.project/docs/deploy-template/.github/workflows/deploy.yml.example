@@ -1,0 +1,64 @@
+name: Deploy to Productforge
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and save images
+        run: |
+          APP="${{ github.event.repository.name }}"
+
+          # Check if any service has a build context (monorepo)
+          BUILDABLE=$(docker compose config --format json | jq -r '.services[] | select(.build != null) | .image // empty' | tr '\n' ' ')
+
+          if [ -n "$BUILDABLE" ]; then
+            # Monorepo: build all services, save buildable images
+            docker compose build
+            echo "Saving images: $BUILDABLE"
+            docker save $BUILDABLE -o images.tar
+          else
+            # Single app: build from Dockerfile, save single image
+            docker build -t "$APP:latest" .
+            docker save "$APP:latest" -o images.tar
+          fi
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy to Pi
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_pi
+          chmod 600 ~/.ssh/id_pi
+          SSH="ssh -i ~/.ssh/id_pi -o StrictHostKeyChecking=no ross@${{ secrets.PI_HOST }}"
+          SCP="scp -i ~/.ssh/id_pi -o StrictHostKeyChecking=no"
+          APP="${{ github.event.repository.name }}"
+          REMOTE_DIR="/mnt/ssd/stacks/$APP"
+
+          cat images.tar | $SSH "docker load"
+
+          $SSH "mkdir -p $REMOTE_DIR"
+          $SCP docker-compose.yml "ross@${{ secrets.PI_HOST }}:$REMOTE_DIR/"
+
+          printf 'DOMAIN=%s\nDATABASE_URL=%s\nREDIS_URL=%s\nREDIS_DURABLE_URL=%s\nSECRET_KEY=%s\n' \
+            "${{ secrets.DOMAIN }}" \
+            "${{ secrets.DATABASE_URL }}" \
+            "${{ secrets.REDIS_URL }}" \
+            "${{ secrets.REDIS_DURABLE_URL }}" \
+            "${{ secrets.SECRET_KEY }}" > /tmp/.env
+          $SCP /tmp/.env "ross@${{ secrets.PI_HOST }}:$REMOTE_DIR/.env"
+
+          $SSH "cd $REMOTE_DIR && docker compose up -d --remove-orphans"

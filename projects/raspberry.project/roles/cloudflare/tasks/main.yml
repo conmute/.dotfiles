@@ -1,0 +1,50 @@
+---
+- name: Add Cloudflare GPG key
+  shell: |
+    mkdir -p --mode=0755 /usr/share/keyrings
+    curl -fsSL https://pkg.cloudflare.com/cloudflare-public-v2.gpg -o /usr/share/keyrings/cloudflare-public-v2.gpg
+  args:
+    creates: /usr/share/keyrings/cloudflare-public-v2.gpg
+
+- name: Add Cloudflare repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cloudflare-public-v2.gpg] https://pkg.cloudflare.com/cloudflared any main"
+    state: present
+
+- name: Install cloudflared
+  apt:
+    name: cloudflared
+    state: present
+    update_cache: yes
+
+- name: Ensure /etc/cloudflared exists
+  file:
+    path: /etc/cloudflared
+    state: directory
+
+- name: Deploy tunnel config template
+  template:
+    src: config.yml.j2
+    dest: /etc/cloudflared/config.yml
+    force: no
+  vars:
+    domain: "{{ lookup('env', 'DOMAIN') | default('example.com', true) }}"
+
+- name: Check if tunnel exists
+  command: cloudflared tunnel list
+  register: tunnel_list
+  changed_when: false
+  failed_when: false
+  become: false
+
+- name: Prompt for tunnel setup if needed
+  debug:
+    msg: |
+      Cloudflare tunnel not configured. SSH into the Pi and run:
+        1. cloudflared tunnel login
+        2. cloudflared tunnel create productforge
+        3. cloudflared tunnel route dns productforge *.yourdomain.com
+        4. Edit /etc/cloudflared/config.yml — replace TUNNEL_ID_HERE with actual tunnel ID
+        5. sudo cloudflared service install
+        6. sudo systemctl start cloudflared
+  when: "'productforge' not in tunnel_list.stdout"
