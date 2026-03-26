@@ -46,10 +46,49 @@ play_file() {
   afplay --volume "$1" "$2" &
 }
 
+show_help() {
+  cat <<'EOF'
+gamify — game-like sound feedback for your terminal
+
+Usage: gamify <command> [args]
+
+Commands:
+  play <name>      Play a sound by name (respects mute + volume)
+  mute             Mute all sounds
+  unmute           Unmute all sounds
+  toggle           Toggle mute state
+  volume [0-100]   Get or set volume (default 100)
+  status           Show mute + volume
+  kill             Kill all playing sounds
+
+Sound name resolution (in GAMIFY_SOUNDS dir):
+  <name>/ with subdirs  Layered: pick one random file from each subdir,
+                        play all simultaneously. Put a .chance file (1-100)
+                        in a subdir to control its play probability.
+  <name>/ with wavs     Pick one random .wav, play it.
+  <name>.wav             Play the file directly.
+
+Environment:
+  GAMIFY_STATE_DIR   State directory (default: ~/.local/share/gamify)
+  GAMIFY_SOUNDS      Sounds directory (default: ~/.local/share/gamify/sounds)
+
+Examples:
+  gamify play commit         # play commit.wav
+  gamify play attention      # pick random from attention/
+  gamify play quick-action   # layered: hit + movement + voice
+  gamify volume 50           # set volume to 50%
+  gamify mute                # silence everything
+EOF
+}
+
 cmd="${1:-status}"
 shift 2>/dev/null || true
 
 case "$cmd" in
+  -h|--help|help)
+    show_help
+    exit 0
+    ;;
   play)
     name="${1:-}"
     [[ -z "$name" ]] && { echo "Usage: gamify play <name>" >&2; exit 1; }

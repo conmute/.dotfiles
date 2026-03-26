@@ -22,6 +22,9 @@ services:
       caddy_1: http://www.conmute.com
       caddy_1.root: "* /sites/conmute"
       caddy_1.file_server:
+      caddy_2: http://
+      caddy_2.root: "* /sites/conmute"
+      caddy_2.file_server:
 
   # Shared PostgreSQL — one cluster, one database per app
   # Apps connect via: postgres://<app>:<password>@postgres:5432/<app>
