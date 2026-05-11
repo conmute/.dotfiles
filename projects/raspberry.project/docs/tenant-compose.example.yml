@@ -1,0 +1,59 @@
+# Annotated tenant compose for productforge.
+#
+# Replace `myapp`, `example.com`, `4000` with your values. The tenant repo
+# keeps its own .env file (gitignored) with the values returned by
+# `scripts/provision-app.sh` and any secrets your app needs.
+#
+# Read docs/PLATFORM.md before changing this file's structure.
+
+services:
+  # ── The app itself ──────────────────────────────────────────────────────
+  myapp:
+    image: myapp:latest
+    restart: unless-stopped
+
+    # Join `web` for ingress, `internal` for shared services (postgres/redis).
+    networks:
+      - web
+      - internal
+
+    # Secrets and connection strings flow from .env. Examples:
+    #   DATABASE_URL=postgres://myapp:...@postgres:5432/myapp
+    #   REDIS_URL=redis://redis:6379/0
+    #   PHX_HOST=example.com   (or whatever your app expects)
+    env_file:
+      - .env
+
+    # Caddy labels — one block per hostname. The numeric suffix groups
+    # directives for the same site. Productforge's Caddy reads these
+    # automatically because this container is on the `web` network.
+    labels:
+      # Primary app host (dashboard.example.com → myapp:4000)
+      caddy_0: http://dashboard.example.com
+      caddy_0.reverse_proxy: "{{upstreams 4000}}"
+
+      # Wildcard subdomain (anything.example.com → myapp:4000)
+      caddy_1: http://*.example.com
+      caddy_1.reverse_proxy: "{{upstreams 4000}}"
+
+  # ── Static landing for the apex (example.com) ───────────────────────────
+  # Container exists only to carry Caddy labels for the static slot at
+  # /sites/myapp-landing. Get this snippet from `scripts/deploy-site.sh`
+  # the first time you ship the site.
+  myapp-landing-labels:
+    image: busybox
+    command: sleep infinity
+    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      caddy: http://example.com
+      caddy.root: "* /sites/myapp-landing"
+      caddy.file_server:
+
+networks:
+  # Both are created by productforge's core stack; tenants attach by name.
+  web:
+    external: true
+  internal:
+    external: true

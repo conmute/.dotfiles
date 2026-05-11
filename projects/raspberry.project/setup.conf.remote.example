@@ -1,0 +1,4 @@
+# Remote profile — Pi reachable over Tailscale.
+# Copy to setup.conf.remote (gitignored) and replace the host below
+# with your own Tailscale MagicDNS name or 100.x.x.x address.
+PI_HOST=productforge.your-tailnet.ts.net

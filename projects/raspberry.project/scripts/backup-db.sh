@@ -2,20 +2,24 @@
 set -euo pipefail
 
 # Backup PostgreSQL databases
-# Usage: ./backup-db.sh [appname] [host]
+# Usage: ./backup-db.sh [appname]
 #
 # Without appname: dumps ALL databases
 # With appname: dumps only that database
 #
+# Host is picked from the active profile (default: home).
+# For Tailscale: PROFILE=remote ./backup-db.sh
+#
 # Examples:
-#   ./backup-db.sh                    # backup all
+#   ./backup-db.sh                    # backup all (home profile)
 #   ./backup-db.sh myapp              # backup only myapp
-#   ./backup-db.sh myapp 100.x.x.x   # via Tailscale
+#   PROFILE=remote ./backup-db.sh     # via Tailscale
+
+# shellcheck source=_load-profile.sh
+source "$(dirname "$0")/_load-profile.sh"
 
 APP="${1:-}"
-HOST="${2:-productforge.local}"
-SSH_KEY="$HOME/.ssh/id_productforge"
-SSH="ssh -i $SSH_KEY ross@$HOST"
+SSH="ssh -i $SSH_KEY $PI_USER@$PI_HOST"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/mnt/ssd/backups"
 

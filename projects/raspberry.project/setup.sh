@@ -2,7 +2,6 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONF_FILE="$SCRIPT_DIR/setup.conf"
 
 # --- Helpers ---
 
@@ -12,21 +11,13 @@ skip() { echo "  - $1 (skipped)"; }
 step() { echo ""; echo "==> $1"; }
 
 ssh_pi() {
-  ssh -i "$SSH_KEY_EXPANDED" -o ConnectTimeout=5 "$PI_USER@$PI_HOST" "$@"
+  ssh -i "$SSH_KEY" -o ConnectTimeout=5 "$PI_USER@$PI_HOST" "$@"
 }
 
-# --- Load config ---
+# --- Load profile (default: home; PROFILE=remote for Tailscale) ---
 
-if [ ! -f "$CONF_FILE" ]; then
-  echo "Error: setup.conf not found"
-  echo ""
-  echo "  cp setup.conf.example setup.conf"
-  echo "  # Fill in your values"
-  echo "  ./setup.sh"
-  exit 1
-fi
-
-source "$CONF_FILE"
+# shellcheck source=scripts/_load-profile.sh
+source "$SCRIPT_DIR/scripts/_load-profile.sh"
 
 # --- Validate config ---
 
@@ -46,8 +37,7 @@ if [ -n "$ERRORS" ]; then
   exit 1
 fi
 
-SSH_KEY_EXPANDED="${SSH_KEY/#\~/$HOME}"
-if [ ! -f "$SSH_KEY_EXPANDED" ]; then
+if [ ! -f "$SSH_KEY" ]; then
   fail "SSH key not found" "File does not exist: $SSH_KEY"
 fi
 ok "SSH key exists: $SSH_KEY"

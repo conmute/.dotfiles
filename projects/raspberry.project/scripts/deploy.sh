@@ -4,24 +4,27 @@ set -euo pipefail
 # Deploy app(s) to productforge
 #
 # Usage:
-#   Single image:  ./deploy.sh <image:tag> <compose-dir> [host]
-#   Monorepo:      ./deploy.sh <project-dir> [host]
+#   Single image:  ./deploy.sh <image:tag> <compose-dir>
+#   Monorepo:      ./deploy.sh <project-dir>
+#
+# Host is picked from the active profile (default: home).
+# For Tailscale: PROFILE=remote ./deploy.sh ...
 #
 # Single image examples:
 #   ./deploy.sh myapp:latest .
-#   ./deploy.sh myapp:v1.2.3 ./deploy productforge.local
+#   PROFILE=remote ./deploy.sh myapp:v1.2.3 ./deploy
 #
 # Monorepo examples (auto-builds all services with build: in docker-compose.yml):
 #   ./deploy.sh ./my-project
-#   ./deploy.sh ./my-project productforge.local
+#   PROFILE=remote ./deploy.sh ./my-project
 
-SSH_KEY="$HOME/.ssh/id_productforge"
-PI_USER="ross"
+# shellcheck source=_load-profile.sh
+source "$(dirname "$0")/_load-profile.sh"
 
 deploy_single() {
   local IMAGE="$1"
   local COMPOSE_DIR="$2"
-  local HOST="${3:-productforge.local}"
+  local HOST="$PI_HOST"
   local SSH="ssh -i $SSH_KEY $PI_USER@$HOST"
   local APP_NAME
   APP_NAME=$(echo "$IMAGE" | cut -d: -f1 | sed 's|.*/||')
@@ -48,7 +51,7 @@ deploy_single() {
 
 deploy_monorepo() {
   local PROJECT_DIR="$1"
-  local HOST="${2:-productforge.local}"
+  local HOST="$PI_HOST"
   local SSH="ssh -i $SSH_KEY $PI_USER@$HOST"
   local COMPOSE_FILE="$PROJECT_DIR/docker-compose.yml"
 

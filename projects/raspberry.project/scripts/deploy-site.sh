@@ -2,17 +2,17 @@
 set -euo pipefail
 
 # Deploy a static site to productforge
-# Usage: ./deploy-site.sh <site-name> <local-dir> [host]
+# Usage: ./deploy-site.sh <site-name> <local-dir>
 #
-# Examples:
-#   ./deploy-site.sh landing-a ./dist
-#   ./deploy-site.sh landing-b ./build productforge.local
+# Host is picked from the active profile (default: home).
+# For Tailscale: PROFILE=remote ./deploy-site.sh <site-name> <local-dir>
 
-SITE="${1:?Usage: deploy-site.sh <site-name> <local-dir> [host]}"
+# shellcheck source=_load-profile.sh
+source "$(dirname "$0")/_load-profile.sh"
+
+SITE="${1:?Usage: deploy-site.sh <site-name> <local-dir>}"
 LOCAL_DIR="${2:?Provide path to the static site directory}"
-HOST="${3:-productforge.local}"
-PI_USER="ross"
-SSH_KEY="$HOME/.ssh/id_productforge"
+HOST="$PI_HOST"
 
 if [ ! -d "$LOCAL_DIR" ]; then
   echo "Error: $LOCAL_DIR is not a directory"
@@ -26,11 +26,18 @@ rsync -avz --delete --no-owner --no-group --chmod=D755,F644 \
 
 echo "==> Done. Files synced to /mnt/ssd/sites/$SITE/"
 echo ""
-echo "To make it accessible, add these labels to the caddy service in core/docker-compose.yml:"
+echo "To make it routable, add a labels-only container to your tenant's"
+echo "docker-compose.yml (NOT to productforge's core compose):"
 echo ""
-echo '    labels:'
-echo '      caddy_N: http://'"$SITE"'.${DOMAIN}'
-echo '      caddy_N.root: "* /sites/'"$SITE"'"'
-echo '      caddy_N.file_server:'
+echo "    $SITE-labels:"
+echo "      image: busybox"
+echo "      command: sleep infinity"
+echo "      restart: unless-stopped"
+echo "      networks: [web]"
+echo "      labels:"
+echo "        caddy: http://<your-hostname>           # e.g. http://example.com"
+echo "        caddy.root: \"* /sites/$SITE\""
+echo "        caddy.file_server:"
 echo ""
-echo "Replace N with the next available number (0, 1, 2, ...)"
+echo "Then redeploy with: ./scripts/deploy.sh <your-tenant-dir>"
+echo "(See docs/PLATFORM.md §3.2 for context.)"

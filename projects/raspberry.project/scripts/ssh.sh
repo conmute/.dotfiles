@@ -1,2 +1,5 @@
 #!/bin/bash
-ssh -i ~/.ssh/id_productforge ross@productforge.local "$@"
+set -euo pipefail
+# shellcheck source=_load-profile.sh
+source "$(dirname "$0")/_load-profile.sh"
+ssh -i "$SSH_KEY" "$PI_USER@$PI_HOST" "$@"

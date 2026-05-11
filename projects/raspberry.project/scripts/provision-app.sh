@@ -2,20 +2,20 @@
 set -euo pipefail
 
 # Provision a new app's database and Redis namespace
-# Usage: ./provision-app.sh <appname> [host]
+# Usage: ./provision-app.sh <appname>
 #
 # Creates:
 #   - PostgreSQL database + user with random password
 #   - Outputs .env vars for the app
 #
-# Examples:
-#   ./provision-app.sh myapp
-#   ./provision-app.sh myapp productforge.local
+# Host is picked from the active profile (default: home).
+# For Tailscale: PROFILE=remote ./provision-app.sh <appname>
 
-APP="${1:?Usage: provision-app.sh <appname> [host]}"
-HOST="${2:-productforge.local}"
-SSH_KEY="$HOME/.ssh/id_productforge"
-SSH="ssh -i $SSH_KEY ross@$HOST"
+# shellcheck source=_load-profile.sh
+source "$(dirname "$0")/_load-profile.sh"
+
+APP="${1:?Usage: provision-app.sh <appname>}"
+SSH="ssh -i $SSH_KEY $PI_USER@$PI_HOST"
 
 # Validate app name — only lowercase letters, digits, underscores, hyphens
 if [[ ! "$APP" =~ ^[a-z][a-z0-9_-]{0,62}$ ]]; then

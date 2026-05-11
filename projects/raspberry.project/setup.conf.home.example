@@ -1,0 +1,4 @@
+# Home profile — Pi reachable on the LAN via mDNS.
+# Copy to setup.conf.home (gitignored).
+# Only set what differs from setup.conf; PI_HOST is the usual one.
+PI_HOST=productforge.local

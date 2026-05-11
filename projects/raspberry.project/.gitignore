@@ -1,5 +1,9 @@
 .env
 !.env.example
 setup.conf
+setup.conf.home
+setup.conf.remote
 !setup.conf.example
+!setup.conf.home.example
+!setup.conf.remote.example
 *.retry
