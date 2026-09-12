@@ -22,13 +22,14 @@ command -qv nvim && alias vim nvim
 
 # Gamified claude — play level-start sound on launch
 function claude --wraps=claude
-    gamify play app-start &
+    command -qv gamify && gamify play app-start &
     command claude $argv
 end
 
 # Gamified shell — random HK combat sound on every command (interactive only)
 function __gamify_preexec --on-event fish_preexec
     test -n "$argv[1]" || return
+    command -qv gamify || return
     killall afplay &>/dev/null
     gamify play quick-action &>/dev/null &
     disown
