@@ -10,6 +10,9 @@ brew install fop
 # Install LLVM
 brew install llvm
 
+# Per-directory environment switcher (loads .envrc)
+brew install direnv
+
 # install openjdk
 brew install openjdk
 # For the system Java wrappers to find this JDK, symlink it with

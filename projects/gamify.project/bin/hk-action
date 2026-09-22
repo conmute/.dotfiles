@@ -1,0 +1,22 @@
+#!/bin/bash
+# hk-action — tmux hook entry point for the gamify "quick-action" sound.
+#
+# Thin wrapper around `gamify` so the per-pane/window-switch sound:
+#   - respects mute (`gamify mute`) and volume,
+#   - handles missing sound dirs gracefully (no failing-afplay storm),
+#   - can't flood CoreAudio / wedge tmux during continuum restore-at-boot.
+#
+# Storm guard: continuum restores many windows at once, each firing this hook.
+# If a burst of afplay is already playing, skip — a single switch should never
+# pile up dozens of players (that flood is what used to freeze/crash tmux).
+#
+# Toggle sounds with:  gamify mute  /  gamify unmute
+
+command -v gamify >/dev/null 2>&1 || exit 0
+
+# burst already playing? bail (covers restore-at-boot + rapid switching)
+if [ "$(pgrep -x afplay 2>/dev/null | wc -l | tr -d ' ')" -ge 3 ]; then
+  exit 0
+fi
+
+exec gamify play quick-action

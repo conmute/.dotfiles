@@ -176,3 +176,5 @@ Pods/
 
 # Karabiner
 .config/karabiner/automatic_backups
+
+**/.claude/settings.local.json

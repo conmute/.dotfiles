@@ -53,6 +53,9 @@ export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 # # asdf for erlang/elixir version management
 # . /usr/local/opt/asdf/libexec/asdf.sh
 
+# direnv — per-directory env via .envrc (hook before fish exec so zsh sessions get it)
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
+
 # Launch fish for non-tmux terminals (Cursor, VS Code, etc.)
 # tmux launches fish directly via default-shell, so skip there
 if [ -z "$TMUX" ]; then

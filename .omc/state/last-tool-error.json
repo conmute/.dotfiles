@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"tmux -V; echo \\\"---\\\"; ls -la ~/.tmux/plugins/ 2>/dev/null; echo \\\"---\\\"; ls -la ~/.tmux.conf ~/.config/tmux/tmux.conf 2>/dev/null\",\"description\":\"Check tmux version and plugin setup\"}",
+  "error": "Exit code 1\ntmux 3.5a\n---\ntotal 0\ndrwxr-xr-x@ 10 Roman.Koss  staff  320 Feb 28 21:23 .\ndrwxr-xr-x@  4 Roman.Koss  staff  128 Feb 18 01:11 ..\ndrwxr-xr-x@ 11 Roman.Koss  staff  352 Feb 28 21:23 tmux-continuum\ndrwxr-xr-x@ 20 Roman.Koss  staff  640 Feb 28 21:23 tmux-resurrect\ndrwxr-xr-x@  8 Roman.Koss  staff  256 Feb 28 21:23 tmux-sensible\nlrwxr-xr-x@  1 Roman.Koss  staff   52 Feb 18 01:11 tmux-spire -> /Users/Roman.Koss/.ghq/github.com/conmute/tmux-spire\ndrwxr-xr-x@ 13 Roman.Koss  staff  416 Feb 28...",
+  "timestamp": "2026-06-15T16:21:02.744Z",
+  "retry_count": 1
+}
