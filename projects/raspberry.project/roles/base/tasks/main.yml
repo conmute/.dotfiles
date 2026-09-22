@@ -76,6 +76,15 @@
     daemon_reload: yes
     state: started
 
+# Auto power-on after power loss (Pi 5 EEPROM setting)
+- name: Configure Pi to boot automatically on power restore
+  shell: |
+    CURRENT=$(rpi-eeprom-config 2>/dev/null || true)
+    if ! echo "$CURRENT" | grep -q "POWER_OFF_ON_HALT=0"; then
+      rpi-eeprom-config --set POWER_OFF_ON_HALT=0
+    fi
+  changed_when: false
+
 # Prevent the system from sleeping/suspending
 - name: Disable system suspend
   systemd:

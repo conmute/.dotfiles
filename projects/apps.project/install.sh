@@ -38,3 +38,9 @@ brew install --cask claude
 
 # Closer to automate Google Calendar
 brew install gcalcli
+
+# opencode — terminal-native AI coding agent
+brew install anomalyco/tap/opencode
+
+# pi.dev CLI
+curl -fsSL https://pi.dev/install.sh | sh

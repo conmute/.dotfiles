@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/Roman.Koss/.docker/bin"
+# End of Docker Desktop section.
+
 set fish_greeting ""
 
 #set -gx TERM xterm-256color
