@@ -144,6 +144,9 @@ fi
 
 step "Checking Ansible"
 
+# install.sh puts Ansible in uv's tool bin dir
+export PATH="$HOME/.local/bin:$PATH"
+
 if ! command -v ansible-playbook >/dev/null 2>&1; then
   echo "  Installing Ansible..."
   "$SCRIPT_DIR/install.sh"
