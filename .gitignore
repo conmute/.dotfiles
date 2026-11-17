@@ -1,3 +1,6 @@
 
 # fish universal variables: machine-local state (contains $HOME-derived paths)
 projects/fish.project/fish/fish_variables
+
+# oh-my-claudecode session state: machine-local
+.omc/
