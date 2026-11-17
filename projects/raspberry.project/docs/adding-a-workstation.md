@@ -93,10 +93,16 @@ need nothing but `ssh`.
 ```
 
 It installs [uv](https://docs.astral.sh/uv/) (official installer) if missing,
-then `uv tool install ansible-core --with ansible` into `~/.local/bin`, then
+then `uv tool install --python 3.13 ansible-core --with ansible` into `~/.local/bin`, then
 the collections from `requirements.yml`. uv uses its own prebuilt Python and
 wheels, so nothing compiles. Open a new shell afterwards so `~/.local/bin` is
 on `PATH`.
+
+> **Python is pinned to 3.13** (override with `ANSIBLE_PYTHON=3.12 ./install.sh`).
+> Unpinned, uv picks the newest Python it can find. ansible-core 2.21 crashes on
+> 3.15 with `module 'dataclasses' has no attribute '_is_type'`, and there are no
+> prebuilt `cryptography` wheels for it, so that also compiles. Re-running
+> `./install.sh` detects a broken install and reinstalls it.
 
 > **Don't use `brew install ansible` on older macOS** (e.g. a 2019 Mac).
 > Without prebuilt bottles, Homebrew compiles `cryptography` → `rust` →
